@@ -27,7 +27,7 @@ The goal is to provide a reusable reference flow for anyone working on DFT using
 
 **cd open-source-dft-flow**
 
-👉 Please follow Guide.txt for the complete DFT flow including:
+👉 Please follow **Guide.md** for the complete DFT flow including:
 
 Synthesis
 Fault Cut
