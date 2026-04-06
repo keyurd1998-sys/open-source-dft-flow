@@ -23,7 +23,7 @@ rtl/              → RTL design files (Mealy & Moore FSM)
 State_Diagram/    → FSM state diagrams & state tables
    
                      
-┌──(kali㉿keyur)-[~/FSM_PROJECT]
+┌──(kali㉿keyur)-[~/open-source-dft-flow]
 └─$ tree
 .
 ├── lib
@@ -50,7 +50,7 @@ It is executed inside a Python virtual environment, along with required system d
 👉 Before running any commands, make sure to activate the environment:
  
 
-┌──(kali㉿keyur)-[~/FSM_PROJECT]
+┌──(kali㉿keyur)-[~/open-source-dft-flow]
 └─$ source ~/fault_env/bin/activate && source $HOME/.cargo/env
   
 ⚠️ Running without activating the environment may lead to command not found / dependency errors.
@@ -60,7 +60,7 @@ It is executed inside a Python virtual environment, along with required system d
 Create working folders for each stage of the flow:
 
                                                                                                                                                
-┌──(fault_env)─(kali㉿keyur)-[~/FSM_PROJECT]
+┌──(fault_env)─(kali㉿keyur)-[~/open-source-dft-flow]
 └─$ mkdir synth cut scan JTAG logs report atpg schematic simulation
 
 ////////////////////////////////////////////
@@ -70,7 +70,7 @@ Create working folders for each stage of the flow:
 Convert RTL → Gate-level netlist using standard cell library:
 
 
-┌──(fault_env)─(kali㉿keyur)-[~/FSM_PROJECT]
+┌──(fault_env)─(kali㉿keyur)-[~/open-source-dft-flow]
 └─$ fault synth -t mealy_fsm -l lib/osu035_stdcells.lib -o synth/mealy_fsm_netlist.v rtl/mealy_fsm_rtl.v 2>&1 | tee logs/synth.log
 
 
@@ -83,7 +83,7 @@ Convert RTL → Gate-level netlist using standard cell library:
 Prepare design for ATPG by isolating sequential elements:
 
 
-┌──(fault_env)─(kali㉿keyur)-[~/FSM_PROJECT]
+┌──(fault_env)─(kali㉿keyur)-[~/open-source-dft-flow]
 └─$ fault cut --clock clk --reset reset -o cut/mealy_fsm_cut_netlist.v synth/mealy_fsm_netlist.v 2>&1 | tee logs/cut.log
 
 
@@ -94,7 +94,7 @@ Converts design into a testable model
 4️⃣ ATPG (Automatic Test Pattern Generation)
 Generate test vectors for fault coverage:
 
-┌──(fault_env)─(kali㉿keyur)-[~/FSM_PROJECT]
+┌──(fault_env)─(kali㉿keyur)-[~/open-source-dft-flow]
 └─$ fault atpg \                                                                                                        
   --cell-model lib/osu035_stdcells.v \
   --tv-count 50 --increment 100 --min-coverage 100 --ceiling 1000\ 
@@ -115,7 +115,7 @@ Generate test vectors for fault coverage:
 Insert scan chains for controllability & observability:
 
   
-┌──(fault_env)─(kali㉿keyur)-[~/FSM_PROJECT]
+┌──(fault_env)─(kali㉿keyur)-[~/open-source-dft-flow]
 └─$ fault chain -l lib/osu035_stdcells.lib -c lib/osu035_stdcells.v --clock clk --reset reset --activeLow -o scan/chain_inserted_netlist.v  synth/mealy_fsm_netlist.v 2>&1 | tee logs/chain.log
 
 
@@ -127,7 +127,7 @@ Flip-flops converted to scan FFs
 Wrap design with JTAG interface:
 
 
-┌──(fault_env)─(kali㉿keyur)-[~/FSM_PROJECT]
+┌──(fault_env)─(kali㉿keyur)-[~/open-source-dft-flow]
 └─$ fault tap --clock clk --reset reset --activeLow\
   -l lib/osu035_stdcells.lib -c lib/osu035_stdcells.v \
   -o JTAG/JTAG_wrapped_netlist.v scan/chain_inserted_netlist.v 2>1 | tee logs/tap.log
@@ -143,12 +143,12 @@ Compare area before & after DFT:
 
 Before DFT:
 
-┌──(fault_env)─(kali㉿keyur)-[~/FSM_PROJECT]
+┌──(fault_env)─(kali㉿keyur)-[~/open-source-dft-flow]
 └─$ yosys -p "read_verilog synth/mealy_fsm_netlist.v; stat -liberty lib/osu035_stdcells.lib" > report/area_report_initial.txt
 
 After DFT:
                                                                                                                                                     
-┌──(fault_env)─(kali㉿keyur)-[~/FSM_PROJECT]
+┌──(fault_env)─(kali㉿keyur)-[~/open-source-dft-flow]
 └─$ yosys -p "read_verilog JTAG/JTAG_wrapped_netlist.v; stat -liberty lib/osu035_stdcells.lib" > report/area_report_final.txt
 
 
@@ -160,7 +160,7 @@ DFT overhead (scan + JTAG)
 Generate visual representation of synthesized design:
 
 
-┌──(fault_env)─(kali㉿keyur)-[~/FSM_PROJECT]
+┌──(fault_env)─(kali㉿keyur)-[~/open-source-dft-flow]
 └─$ yosys -p "read_liberty -lib lib/osu035_stdcells.lib; read_verilog synth/mealy_fsm_netlist.v; hierarchy -top mealy_fsm; proc; opt; clean; show -format dot -prefix schematic/mealy_fsm_synth_schematic" && dot -Tsvg -Gsplines=ortho -Grankdir=LR -Gnodesep=1.5 -Granksep=1 -Gconcentrate=true -Nshape=record -Gmcmitersize=10 -o schematic/mealy_fsm_synth_schematic.svg schematic/mealy_fsm_synth_schematic.dot
 
 
@@ -172,22 +172,22 @@ Clean schematic for debugging
 Compile and run simulations:
 
 
-┌──(fault_env)─(kali㉿keyur)-[~/FSM_PROJECT]
+┌──(fault_env)─(kali㉿keyur)-[~/open-source-dft-flow]
 └─$ iverilog -D VCD -o simulation/chain_sim scan/chain_inserted_netlist.v.tb.sv
 
-┌──(fault_env)─(kali㉿keyur)-[~/FSM_PROJECT]
+┌──(fault_env)─(kali㉿keyur)-[~/open-source-dft-flow]
 └─$ iverilog -D VCD -o simulation/JTAG_sim JTAG/JTAG_wrapped_netlist.v.tb.sv
 
-┌──(fault_env)─(kali㉿keyur)-[~/FSM_PROJECT]
+┌──(fault_env)─(kali㉿keyur)-[~/open-source-dft-flow]
 └─$ cd simulation
 
-┌──(fault_env)─(kali㉿keyur)-[~/FSM_PROJECT/simulation]
+┌──(fault_env)─(kali㉿keyur)-[~/open-source-dft-flow/simulation]
 └─$ vvp JTAG_sim
 
-┌──(fault_env)─(kali㉿keyur)-[~/FSM_PROJECT/simulation]
+┌──(fault_env)─(kali㉿keyur)-[~/open-source-dft-flow/simulation]
 └─$ vvp chain_sim
 
-┌──(fault_env)─(kali㉿keyur)-[~/FSM_PROJECT/simulation]
+┌──(fault_env)─(kali㉿keyur)-[~/open-source-dft-flow/simulation]
 └─$ cd ../
 
 
@@ -207,7 +207,7 @@ VCD waveform files for analysis
 | Simulation | Functional verification   |
 
 
-┌──(fault_env)─(kali㉿keyur)-[~/FSM_PROJECT]
+┌──(fault_env)─(kali㉿keyur)-[~/open-source-dft-flow]
 └─$ tree
 .
 ├── atpg
