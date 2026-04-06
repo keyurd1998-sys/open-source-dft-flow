@@ -49,7 +49,7 @@ mkdir synth cut scan JTAG logs report atpg schematic simulation
 Convert RTL → Gate-level netlist using standard cell library:
 
 
-fault synth -t mealy_fsm -l lib/osu035_stdcells.lib -o synth/mealy_fsm_netlist.v rtl/mealy_fsm_rtl.v 2>&1 | tee logs/synth.log
+fault synth -t mealy_fsm -l lib/osu035_stdcells.lib -o synth/mealy_fsm_netlist.v rtl/mealy_fsm_rtl.v 2>&1 | tee logs/mealy_fsm_synth.log
 
 
 📌 Output:
@@ -61,7 +61,7 @@ fault synth -t mealy_fsm -l lib/osu035_stdcells.lib -o synth/mealy_fsm_netlist.v
 Prepare design for ATPG by isolating sequential elements:
 
 
-fault cut --clock clk --reset reset -o cut/mealy_fsm_cut_netlist.v synth/mealy_fsm_netlist.v 2>&1 | tee logs/cut.log
+fault cut --clock clk --reset reset -o cut/mealy_fsm_cut_netlist.v synth/mealy_fsm_netlist.v 2>&1 | tee logs/mealy_fsm_cut.log
 
 
 📌 Purpose:
@@ -77,9 +77,9 @@ fault atpg \
   --clock clk \
   --reset reset \
   -o atpg/mealy_fsm_pattern.json \
-  --output-coverage-metadata report/atpg_fault_metadata.yml \
+  --output-coverage-metadata report/mealy_fsm_atpg_fault_metadata.yml \
   cut/mealy_fsm_cut_netlist.v \
-  2>&1 | tee logs/atpg.log
+  2>&1 | tee logs/mealy_fsm_atpg.log
 
 
 📌 Output:
@@ -91,7 +91,7 @@ fault atpg \
 Insert scan chains for controllability & observability:
 
   
-fault chain -l lib/osu035_stdcells.lib -c lib/osu035_stdcells.v --clock clk --reset reset --activeLow -o scan/chain_inserted_netlist.v  synth/mealy_fsm_netlist.v 2>&1 | tee logs/chain.log
+fault chain -l lib/osu035_stdcells.lib -c lib/osu035_stdcells.v --clock clk --reset reset --activeLow -o scan/mealy_fsm_chain_inserted_netlist.v  synth/mealy_fsm_netlist.v 2>&1 | tee logs/mealy_fsm_chain.log
 
 
 📌 Result:
@@ -104,7 +104,7 @@ Wrap design with JTAG interface:
 
 fault tap --clock clk --reset reset --activeLow\
   -l lib/osu035_stdcells.lib -c lib/osu035_stdcells.v \
-  -o JTAG/JTAG_wrapped_netlist.v scan/chain_inserted_netlist.v 2>1 | tee logs/tap.log
+  -o JTAG/mealy_fsm_JTAG_wrapped_netlist.v scan/mealy_fsm_chain_inserted_netlist.v 2>1 | tee logs/mealy_fsm_tap.log
 
 
 📌 Adds:
@@ -117,11 +117,11 @@ Compare area before & after DFT:
 
 Before DFT:
 
-yosys -p "read_verilog synth/mealy_fsm_netlist.v; stat -liberty lib/osu035_stdcells.lib" > report/area_report_initial.txt
+yosys -p "read_verilog synth/mealy_fsm_netlist.v; stat -liberty lib/osu035_stdcells.lib" > report/mealy_fsm_area_report_initial.txt
 
 After DFT:
                                                                                                                                                     
-yosys -p "read_verilog JTAG/JTAG_wrapped_netlist.v; stat -liberty lib/osu035_stdcells.lib" > report/area_report_final.txt
+yosys -p "read_verilog JTAG/mealy_fsm_JTAG_wrapped_netlist.v; stat -liberty lib/osu035_stdcells.lib" > report/mealy_fsm_area_report_final.txt
 
 
 📌 Insight:
@@ -143,15 +143,15 @@ Clean schematic for debugging
 Compile and run simulations:
 
 
-iverilog -D VCD -o simulation/chain_sim scan/chain_inserted_netlist.v.tb.sv
+iverilog -D VCD -o simulation/mealy_fsm_chain_sim scan/mealy_fsm_chain_inserted_netlist.v.tb.sv
 
-iverilog -D VCD -o simulation/JTAG_sim JTAG/JTAG_wrapped_netlist.v.tb.sv
+iverilog -D VCD -o simulation/mealy_fsm_JTAG_sim JTAG/mealy_fsm_JTAG_wrapped_netlist.v.tb.sv
 
 cd simulation
 
-vvp JTAG_sim
+vvp mealy_fsm_JTAG_sim
 
-vvp chain_sim
+vvp mealy_fsm_chain_sim
 
 cd ../
 
@@ -180,43 +180,43 @@ tree
 ├── cut
 │   └── mealy_fsm_cut_netlist.v
 ├── JTAG
-│   ├── JTAG_wrapped_netlist.v
-│   ├── JTAG_wrapped_netlist.v+attrs
-│   ├── JTAG_wrapped_netlist.v.jtag_intermediate.v
-│   ├── JTAG_wrapped_netlist.v.tb.sv
-│   └── JTAG_wrapped_netlist.v.tb.sv.log
+│   ├── mealy_fsm_JTAG_wrapped_netlist.v
+│   ├── mealy_fsm_JTAG_wrapped_netlist.v+attrs
+│   ├── mealy_fsm_JTAG_wrapped_netlist.v.jtag_intermediate.v
+│   ├── mealy_fsm_JTAG_wrapped_netlist.v.tb.sv
+│   └── mealy_fsm_JTAG_wrapped_netlist.v.tb.sv.log
 ├── lib
 │   ├── osu035_stdcells.lib
 │   └── osu035_stdcells.v
 ├── logs
-│   ├── atpg.log
-│   ├── chain.log
-│   ├── cut.log
-│   ├── synth.log
-│   └── tap.log
+│   ├── mealy_fsm_atpg.log
+│   ├── mealy_fsm_chain.log
+│   ├── mealy_fsm_cut.log
+│   ├── mealy_fsm_synth.log
+│   └── mealy_fsm_tap.log
 ├── parser.out
 ├── parsetab.py
 ├── report
-│   ├── area_report_final.txt
-│   ├── area_report_initial.txt
-│   └── atpg_fault_metadata.yml
+│   ├── mealy_fsm_area_report_final.txt
+│   ├── mealy_fsm_area_report_initial.txt
+│   └── mealy_fsm_atpg_fault_metadata.yml
 ├── rtl
 │   ├── mealy_fsm_rtl.v
 │   └── moore_fsm_rtl.v
 ├── scan
-│   ├── chain_inserted_netlist.v
-│   ├── chain_inserted_netlist.v+attrs
-│   ├── chain_inserted_netlist.v.chain-intermediate.v
-│   ├── chain_inserted_netlist.v.tb.sv
-│   └── chain_inserted_netlist.v.tb.sv.log
+│   ├── mealy_fsm_chain_inserted_netlist.v
+│   ├── mealy_fsm_chain_inserted_netlist.v+attrs
+│   ├── mealy_fsm_chain_inserted_netlist.v.chain-intermediate.v
+│   ├── mealy_fsm_chain_inserted_netlist.v.tb.sv
+│   └── mealy_fsm_chain_inserted_netlist.v.tb.sv.log
 ├── schematic
 │   ├── mealy_fsm_synth_schematic.dot
 │   └── mealy_fsm_synth_schematic.svg
 ├── simulation
-│   ├── chain_sim
-│   ├── chain.vcd
-│   ├── dut.vcd
-│   └── JTAG_sim
+│   ├── mealy_fsm_chain_sim
+│   ├── mealy_fsm_chain.vcd
+│   ├── mealy_fsm_dut.vcd
+│   └── mealy_fsm_JTAG_sim
 ├── State_Diagram
 │   ├── Mealy
 │   │   ├── mealy_fsm_state_diagram.png
