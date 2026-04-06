@@ -1,21 +1,3 @@
-FSM DFT Flow – Complete Reference Guide
-🔹 Project Overview
-
-This project demonstrates a complete Design-for-Test (DFT) flow on Finite State Machines (FSMs) including:
-
-RTL design (Mealy & Moore FSM)
-Logic synthesis
-Fault modeling & ATPG
-Scan chain insertion
-JTAG integration
-Area analysis
-Schematic generation
-Simulation & verification
-
-The goal is to provide a reusable reference flow for anyone working on DFT using open-source tools like Yosys and Fault.
-
-
-
 ////////////////////////////////////////////
 ///////////////////////////////////////////                                                                                                                          
 lib/              → Standard cell library (.lib and .v)
@@ -23,8 +5,7 @@ rtl/              → RTL design files (Mealy & Moore FSM)
 State_Diagram/    → FSM state diagrams & state tables
    
                      
-┌──(kali㉿keyur)-[~/open-source-dft-flow]
-└─$ tree
+**tree**
 .
 ├── lib
 │   ├── osu035_stdcells.lib
@@ -50,8 +31,7 @@ It is executed inside a Python virtual environment, along with required system d
 👉 Before running any commands, make sure to activate the environment:
  
 
-┌──(kali㉿keyur)-[~/open-source-dft-flow]
-└─$ source ~/fault_env/bin/activate && source $HOME/.cargo/env
+**source ~/fault_env/bin/activate && source $HOME/.cargo/env**
   
 ⚠️ Running without activating the environment may lead to command not found / dependency errors.
 ////////////////////////////////////////////
@@ -60,8 +40,7 @@ It is executed inside a Python virtual environment, along with required system d
 Create working folders for each stage of the flow:
 
                                                                                                                                                
-┌──(fault_env)─(kali㉿keyur)-[~/open-source-dft-flow]
-└─$ mkdir synth cut scan JTAG logs report atpg schematic simulation
+**mkdir synth cut scan JTAG logs report atpg schematic simulation**
 
 ////////////////////////////////////////////
 ///////////////////////////////////////////
@@ -70,8 +49,7 @@ Create working folders for each stage of the flow:
 Convert RTL → Gate-level netlist using standard cell library:
 
 
-┌──(fault_env)─(kali㉿keyur)-[~/open-source-dft-flow]
-└─$ fault synth -t mealy_fsm -l lib/osu035_stdcells.lib -o synth/mealy_fsm_netlist.v rtl/mealy_fsm_rtl.v 2>&1 | tee logs/synth.log
+**fault synth -t mealy_fsm -l lib/osu035_stdcells.lib -o synth/mealy_fsm_netlist.v rtl/mealy_fsm_rtl.v 2>&1 | tee logs/synth.log**
 
 
 📌 Output:
@@ -83,8 +61,7 @@ Convert RTL → Gate-level netlist using standard cell library:
 Prepare design for ATPG by isolating sequential elements:
 
 
-┌──(fault_env)─(kali㉿keyur)-[~/open-source-dft-flow]
-└─$ fault cut --clock clk --reset reset -o cut/mealy_fsm_cut_netlist.v synth/mealy_fsm_netlist.v 2>&1 | tee logs/cut.log
+**fault cut --clock clk --reset reset -o cut/mealy_fsm_cut_netlist.v synth/mealy_fsm_netlist.v 2>&1 | tee logs/cut.log**
 
 
 📌 Purpose:
@@ -94,16 +71,15 @@ Converts design into a testable model
 4️⃣ ATPG (Automatic Test Pattern Generation)
 Generate test vectors for fault coverage:
 
-┌──(fault_env)─(kali㉿keyur)-[~/open-source-dft-flow]
-└─$ fault atpg \                                                                                                        
-  --cell-model lib/osu035_stdcells.v \
-  --tv-count 50 --increment 100 --min-coverage 100 --ceiling 1000\ 
-  --clock clk \
-  --reset reset \
-  -o atpg/mealy_fsm_pattern.json \
-  --output-coverage-metadata report/atpg_fault_metadata.yml \
-  cut/mealy_fsm_cut_netlist.v \
-  2>&1 | tee logs/atpg.log
+**fault atpg \**                                                                                                     
+  **--cell-model lib/osu035_stdcells.v \**
+  **--tv-count 50 --increment 100 --min-coverage 100 --ceiling 1000\ **
+  **--clock clk \**
+  **--reset reset \**
+  **-o atpg/mealy_fsm_pattern.json \**
+  **--output-coverage-metadata report/atpg_fault_metadata.yml \**
+  **cut/mealy_fsm_cut_netlist.v \**
+  **2>&1 | tee logs/atpg.log**
 
 
 📌 Output:
