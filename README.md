@@ -23,9 +23,9 @@ The goal is to provide a reusable reference flow for anyone working on DFT using
 🚀 Getting Started (Clone & Setup)
 📥 Clone the Repository
 
-git clone https://github.com/keyurd1998-sys/open-source-dft-flow.git
+**git clone https://github.com/keyurd1998-sys/open-source-dft-flow.git**
 
-cd open-source-dft-flow
+**cd open-source-dft-flow**
 
 👉 Please follow Guide.txt for the complete DFT flow including:
 
