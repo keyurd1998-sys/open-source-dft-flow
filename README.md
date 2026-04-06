@@ -43,10 +43,15 @@ The goal is to provide a reusable reference flow for anyone working on DFT using
 👉 Please follow **Guide.txt** for the complete DFT flow including:
 
 Synthesis
+
 Fault Cut
+
 ATPG
+
 Scan Chain Insertion
+
 JTAG Integration
+
 Simulation & Reporting
 
 💡 Tip
