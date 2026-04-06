@@ -1,7 +1,9 @@
 # open-source-dft-flow
+
 End-to-end FSM Design-for-Test (DFT) flow using Yosys and Fault including synthesis, ATPG, scan chain, JTAG, and simulation.
 
 FSM DFT Flow – Complete Reference Guide
+
 🔹 Project Overview
 
 This project demonstrates a complete Design-for-Test (DFT) flow on Finite State Machines (FSMs) including:
@@ -19,6 +21,7 @@ The goal is to provide a reusable reference flow for anyone working on DFT using
 
 
 ////////////////////////////////////////////
+
 ///////////////////////////////////////////  
 🚀 Getting Started (Clone & Setup)
 📥 Clone the Repository
