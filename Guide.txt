@@ -210,7 +210,6 @@ tree
 │   ├── chain_inserted_netlist.v.tb.sv
 │   └── chain_inserted_netlist.v.tb.sv.log
 ├── schematic
-│   ├── fsm_schematic_synth.dot
 │   ├── mealy_fsm_synth_schematic.dot
 │   └── mealy_fsm_synth_schematic.svg
 ├── simulation
