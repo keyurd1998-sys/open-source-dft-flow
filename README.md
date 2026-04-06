@@ -9,13 +9,21 @@ FSM DFT Flow – Complete Reference Guide
 This project demonstrates a complete Design-for-Test (DFT) flow on Finite State Machines (FSMs) including:
 
 RTL design (Mealy & Moore FSM)
+
 Logic synthesis
+
 Fault modeling & ATPG
+
 Scan chain insertion
+
 JTAG integration
+
 Area analysis
+
 Schematic generation
+
 Simulation & verification
+
 
 The goal is to provide a reusable reference flow for anyone working on DFT using open-source tools like Yosys and Fault.
 
