@@ -20,8 +20,8 @@ module moore_machine (
     state_t current_state, next_state;
 
     // 1. State Register (Sequential)
-    always @(posedge clk or negedge rst_n) begin
-        if (!rst_n)
+    always @(negedge clk or posedge rst_n) begin
+        if (rst_n)
             current_state <= STATE_A;
         else
             current_state <= next_state;
