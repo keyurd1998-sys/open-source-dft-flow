@@ -18,8 +18,8 @@ module mealy_fsm (
     reg [2:0] current_state, next_state;
 
     // State register
-    always @(posedge clk or negedge reset) begin
-        if (!reset)
+    always @(negedge clk or posedge reset) begin
+        if (reset)
             current_state <= A;
         else
             current_state <= next_state;
