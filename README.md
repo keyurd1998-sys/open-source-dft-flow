@@ -1,4 +1,4 @@
-# 🛡️ Open-Source DFT Flow (FSM Focus)
+# 🛡️ Open-Source DFT Flow
 
 [![Tools](https://img.shields.io/badge/Tools-Yosys%20%7C%20Fault%20%7C%20Icarus-blue)](#)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
