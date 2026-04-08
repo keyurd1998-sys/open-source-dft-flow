@@ -12,7 +12,6 @@ An end-to-end **Design-for-Test (DFT)** methodology for Finite State Machines (F
 Testing is a critical phase in the silicon lifecycle. This project demonstrates a hardware-agnostic flow using **Yosys** and **Fault** to transform high-level RTL into testable silicon netlists. It is designed to be a reusable reference for academic and professional VLSI research.
 
 ### Key Features:
-* **FSM Support:** Verified for both Mealy and Moore architectures.
 * **Logic Synthesis:** Standard cell mapping using Yosys.
 * **DFT Insertion:** Automated Scan Chain stitching and JTAG (TAP) integration.
 * **ATPG:** High-coverage pattern generation for stuck-at fault models.
@@ -23,7 +22,7 @@ Testing is a critical phase in the silicon lifecycle. This project demonstrates 
 ## 🏗️ The DFT Pipeline
 The flow follows a standard industry-like sequence:
 
-1.  **RTL Design:** Input FSM Verilog code.
+1.  **RTL Design:** Input Verilog code.
 2.  **Synthesis:** Convert RTL to gate-level netlists via **Yosys**.
 3.  **DFT Insertion:** Insert scan-chains and JTAG controllers using **Fault**.
 4.  **ATPG:** Generate test patterns for fault coverage.
