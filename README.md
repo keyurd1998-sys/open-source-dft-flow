@@ -34,7 +34,7 @@ The flow follows a standard industry-like sequence:
 
 ### 1. Clone the Repository
 ```bash
-git clone [https://github.com/keyurd1998-sys/open-source-dft-flow.git](https://github.com/keyurd1998-sys/open-source-dft-flow.git)
+git clone https://github.com/keyurd1998-sys/open-source-dft-flow.git
 cd open-source-dft-flow
 ```
 ---
