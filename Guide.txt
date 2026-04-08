@@ -21,19 +21,6 @@ tree
         ├── moore_fsm_stste_diagram.png
         └── Moore_State_Table.png
 
-
-////////////////////////////////////////////
-///////////////////////////////////////////
-⚠️ Important Setup Note
-This project uses the Fault DFT tool installed locally (NOT Docker-based).
-It is executed inside a Python virtual environment, along with required system dependencies (Yosys, Icarus Verilog, Graphviz, etc.).
-
-👉 Before running any commands, make sure to activate the environment:
- 
-
-source ~/fault_env/bin/activate && source $HOME/.cargo/env
-  
-⚠️ Running without activating the environment may lead to command not found / dependency errors.
 ////////////////////////////////////////////
 ///////////////////////////////////////////
 1️⃣ Directory Initialization
