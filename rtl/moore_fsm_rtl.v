@@ -1,75 +1,60 @@
-module moore_machine (
-    input wire clk,
-    input wire rst_n,
-    input wire x,
-    output reg [4:2] y // Outputs Y[4], Y[3], Y[2]
+module moore_fsm (
+    input  clk,
+    input  reset,
+    input  X,
+    output reg [4:2] Y
 );
-(* fsm_encoding = "binary" *)
-    // State Encoding
-    typedef enum reg [2:0] {
-        STATE_A = 3'd0,
-        STATE_B = 3'd1,
-        STATE_C = 3'd2,
-        STATE_D = 3'd3,
-        STATE_E = 3'd4,
-        STATE_F = 3'd5,
-        STATE_G = 3'd6,
-        STATE_H = 3'd7
-    } state_t;
 
-    state_t current_state, next_state;
+    // Attribute to force 3-bit binary encoding in Yosys/Fault
+    (* fsm_encoding = "binary" *)
+    reg [2:0] current_state;
+    reg [2:0] next_state;
 
-    // 1. State Register (Sequential)
-    always @(negedge clk or posedge rst_n) begin
-        if (rst_n)
+    localparam STATE_A = 3'b000;
+    localparam STATE_B = 3'b001;
+    localparam STATE_C = 3'b010;
+    localparam STATE_D = 3'b011;
+    localparam STATE_E = 3'b100;
+    localparam STATE_F = 3'b101;
+    localparam STATE_G = 3'b110;
+    localparam STATE_H = 3'b111;
+
+    // --- State Register ---
+    always @(posedge clk or posedge reset) begin
+        if (reset)
             current_state <= STATE_A;
         else
             current_state <= next_state;
     end
 
-    // 2. Next State Logic and Output Logic (Combinational)
+    // --- Next State Logic ---
     always @(*) begin
-        // Default values
-        next_state = current_state;
-        y = 3'b000;
-
         case (current_state)
-            STATE_A: begin
-                if (x == 0) begin next_state = STATE_A; y = 3'b000; end
-                else        begin next_state = STATE_G; y = 3'b110; end
-            end
-            STATE_B: begin
-                if (x == 0) begin next_state = STATE_A; y = 3'b000; end
-                else        begin next_state = STATE_H; y = 3'b111; end
-            end
-            STATE_C: begin
-                if (x == 0) begin next_state = STATE_F; y = 3'b101; end
-                else        begin next_state = STATE_D; y = 3'b011; end
-            end
-            STATE_D: begin
-                if (x == 0) begin next_state = STATE_B; y = 3'b001; end
-                else        begin next_state = STATE_A; y = 3'b000; end
-            end
-            STATE_E: begin
-                if (x == 0) begin next_state = STATE_F; y = 3'b101; end
-                else        begin next_state = STATE_C; y = 3'b010; end
-            end
-            STATE_F: begin
-                if (x == 0) begin next_state = STATE_H; y = 3'b111; end
-                else        begin next_state = STATE_C; y = 3'b010; end
-            end
-            STATE_G: begin
-                if (x == 0) begin next_state = STATE_G; y = 3'b110; end
-                else        begin next_state = STATE_B; y = 3'b001; end
-            end
-            STATE_H: begin
-                if (x == 0) begin next_state = STATE_H; y = 3'b111; end
-                else        begin next_state = STATE_E; y = 3'b100; end
-            end
-            default: begin
-                next_state = STATE_A;
-                y = 3'b000;
-            end
+            STATE_A: next_state = (X == 1'b0) ? STATE_A : STATE_G;
+            STATE_B: next_state = (X == 1'b0) ? STATE_A : STATE_H;
+            STATE_C: next_state = (X == 1'b0) ? STATE_F : STATE_D;
+            STATE_D: next_state = (X == 1'b0) ? STATE_B : STATE_A;
+            STATE_E: next_state = (X == 1'b0) ? STATE_F : STATE_C;
+            STATE_F: next_state = (X == 1'b0) ? STATE_H : STATE_C;
+            STATE_G: next_state = (X == 1'b0) ? STATE_G : STATE_B;
+            STATE_H: next_state = (X == 1'b0) ? STATE_H : STATE_E;
+            default: next_state = STATE_A;
+        endcase
+    end
+
+    // --- Output Logic ---
+    // Note: To match your table exactly, Y is determined by State and Input X.
+    always @(*) begin
+        case (current_state)
+            STATE_A: Y = (X == 1'b0) ? 3'b000 : 3'b110;
+            STATE_B: Y = (X == 1'b0) ? 3'b000 : 3'b111;
+            STATE_C: Y = (X == 1'b0) ? 3'b101 : 3'b011;
+            STATE_D: Y = (X == 1'b0) ? 3'b001 : 3'b000;
+            STATE_E: Y = (X == 1'b0) ? 3'b101 : 3'b010;
+            STATE_F: Y = (X == 1'b0) ? 3'b111 : 3'b010;
+            STATE_G: Y = (X == 1'b0) ? 3'b110 : 3'b001;
+            STATE_H: Y = (X == 1'b0) ? 3'b111 : 3'b100;
+            default: Y = 3'b000;
         endcase
     end
 
