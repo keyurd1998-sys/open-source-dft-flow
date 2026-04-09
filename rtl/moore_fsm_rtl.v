@@ -4,7 +4,7 @@ module moore_machine (
     input wire x,
     output reg [4:2] y // Outputs Y[4], Y[3], Y[2]
 );
-
+(* fsm_encoding = "binary" *)
     // State Encoding
     typedef enum reg [2:0] {
         STATE_A = 3'd0,
