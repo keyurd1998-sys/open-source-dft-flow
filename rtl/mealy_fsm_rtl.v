@@ -4,7 +4,7 @@ module mealy_fsm (
     input  wire X,
     output reg [4:0] Y
 );
-
+(* fsm_encoding = "binary" *)
     // State encoding using parameters
     parameter A = 3'd0,
               B = 3'd1,
