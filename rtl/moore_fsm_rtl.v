@@ -2,7 +2,7 @@ module moore_fsm (
     input  clk,
     input  reset,
     input  X,
-    output reg [4:2] Y
+    output reg [2:0] Y
 );
 
     // Attribute to force 3-bit binary encoding in Yosys/Fault
