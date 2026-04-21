@@ -34,13 +34,6 @@ sudo apt-get install -y gawk git make python3 python3-pip python3-venv \
     libreadline-dev pkg-config tcl-dev zlib1g-dev graphviz xdot \
     autoconf gperf g++ libssl-dev curl -y
 
-#install swift
-curl -O https://download.swift.org/swiftly/linux/swiftly-$(uname -m).tar.gz && \
-tar zxf swiftly-$(uname -m).tar.gz && \
-./swiftly init --quiet-shell-followup && \
-. "${SWIFTLY_HOME_DIR:-$HOME/.local/share/swiftly}/env.sh" && \
-hash -r
-
 # Python Virtual Environment
 echo -e "\n[2/7] Setting up Python Virtual Environment..."
 python3 -m venv "$HOME/fault_env"
@@ -53,8 +46,16 @@ if [ ! -d "$HOME/Fault" ]; then
     git clone https://github.com/AUCOHL/Fault.git "$HOME/Fault" -q
 fi
 cd "$HOME/Fault"
+
+# --- AUTOMATION: Force the version to match your installed compiler ---
+# This detects your current swift version and writes it to .swift-version
+# to bypass the version-mismatch error.
+swift --version | head -n 1 | awk '{print $3}' | cut -d'.' -f1,2 > .swift-version
+echo " Set .swift-version to $(cat .swift-version)"
+
 echo "⏳ Compiling Fault (Swift build)..."
-swift build -c release > /dev/null
+swift build -c release 
+
 # Place the binary in the env
 cp .build/release/fault "$HOME/fault_env/bin/fault"
 chmod +x "$HOME/fault_env/bin/fault"
