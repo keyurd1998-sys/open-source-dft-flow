@@ -32,7 +32,13 @@ sudo apt-get update -qq
 sudo apt-get install -y gawk git make python3 python3-pip python3-venv \
     build-essential lld bison clang flex libffi-dev libfl-dev \
     libreadline-dev pkg-config tcl-dev zlib1g-dev graphviz xdot \
-    autoconf gperf g++ libssl-dev curl swiftlang -y
+    autoconf gperf g++ libssl-dev curl -y
+
+#install swift
+curl -O https://download.swift.org/swiftly/linux/swiftly-$(uname -m).tar.gz
+tar zxf swiftly-$(uname -m).tar.gz
+./swiftly init --quiet
+source "$HOME/.local/share/swiftly/env.sh"
 
 # Python Virtual Environment
 echo -e "\n[2/7] Setting up Python Virtual Environment..."
