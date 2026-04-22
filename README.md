@@ -113,7 +113,7 @@ source ~/fault_env/bin/activate && source $HOME/.cargo/env
 ## 1️⃣ Directory Initialization
 Prepare the workspace by creating folders for each stage of the flow to keep outputs organized:
 ```bash
-mkdir synth cut scan JTAG logs report atpg schematic simulation
+mkdir Synth Cut Scan JTAG Logs Report Atpg Schematic Simulation
 ```
 
 ---
@@ -122,7 +122,7 @@ mkdir synth cut scan JTAG logs report atpg schematic simulation
 Map the RTL to a gate-level netlist using the provided standard cell library.
 ```bash
 # General Syntax:
-# fault synth -t <top_module> -l lib/<.lib_file> -o synth/<output_netlist>.v rtl/<input_rtl>.v
+fault synth -t <top_module> -l lib/<.lib_file> -o synth/<output_netlist>.v rtl/<input_rtl>.v
 ```
 
 ---
