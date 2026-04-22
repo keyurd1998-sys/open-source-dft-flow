@@ -35,7 +35,7 @@ flowchart TB
 A[RTL] --> B[Synth]
 B --> C[Gate-Level Netlist]
 C --> D[Cut]
-D --> E[Sequential Isolated Cut Netlist]
+D --> E[Netlist Without Sequential eElement]
 C --> J[Chain]
 J --> K[Scan Inserted Netlist]
 E --> F[ATPG]
