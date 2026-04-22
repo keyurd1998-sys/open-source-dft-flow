@@ -57,12 +57,12 @@ L --> M[Final DFT Netlist]
 M --> N[Simulation<br/>Icarus Verilog]
 M --> O[Area Analysis<br/>Yosys]
 
-style A fill:#1f77b4,color:#fff
-style B fill:#2ca02c,color:#fff
+style D fill:#ff7f0e,color:#fff
+style B fill:#ff7f0e,color:#fff
 style F fill:#ff7f0e,color:#fff
-style H fill:#9467bd,color:#fff
-style L fill:#d62728,color:#fff
-style M fill:#17becf,color:#fff
+style J fill:#ff7f0e,color:#fff
+style H fill:#ff7f0e,color:#fff
+style L fill:#ff7f0e,color:#fff
 ```
 
 ---
