@@ -96,10 +96,10 @@ Note on Duration: Because Yosys and Icarus are built from source to ensure compa
 Uses all CPU cores (nproc)
 Close heavy apps during build
 Recommended: ≥ 4GB RAM
+
 ---
 
 ##  Activate Fault_Environment
-
 Crucial: You must activate the environment in every new terminal session to link the hardware binaries and Python libraries.
 ```bash
 source ~/fault_env/bin/activate && source $HOME/.cargo/env
