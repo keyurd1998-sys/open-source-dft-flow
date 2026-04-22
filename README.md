@@ -31,7 +31,7 @@ The flow follows a standard industry-like sequence:
 ---
 ## 📊 DFT Flow Diagram
 ```mermaid
-flowchart LR
+flowchart TB
 
 A[RTL Design<br/>Verilog FSM] --> B[Synthesis<br/>Yosys]
 B --> C[Gate-Level Netlist]
