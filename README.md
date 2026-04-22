@@ -32,18 +32,18 @@ The flow follows a standard industry-like sequence:
 ## 📊 DFT Flow Diagram
 ```mermaid
 flowchart TB
-A[RTL] --> B[synth]
+A[RTL] --> B[Synth]
 B --> C[Gate-Level Netlist]
 C --> D[Cut]
 D --> E[Sequential Isolated Cut Netlist]
 C --> J[Chain]
 J --> K[Scan Inserted Netlist]
-E --> F[atpg]
+E --> F[ATPG]
 F --> G[Patterns.json]
-G --> H[Fault asm<br/>Binary Conversion]
+G --> H[ASM<br/>Binary Conversion]
 K --> H
 H --> I[stimulus.bin<br/>response.bin]
-K --> L[tap]
+K --> L[TAP]
 I --> L
 L --> M[Tap inserted Netlist]
 L --> P[Testbench]
