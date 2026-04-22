@@ -29,6 +29,43 @@ The flow follows a standard industry-like sequence:
 5.  **Verification:** Simulation and JTAG validation via **Icarus Verilog**.
 
 ---
+## 📊 DFT Flow Diagram
+```mermaid
+flowchart LR
+
+A[RTL Design<br/>Verilog FSM] --> B[Synthesis<br/>Yosys]
+B --> C[Gate-Level Netlist]
+
+C --> D[Fault Cut<br/>Sequential Isolation]
+D --> E[Cut Netlist]
+
+E --> F[ATPG<br/>Pattern Generation]
+F --> G[Patterns.json]
+
+G --> H[ASM<br/>Binary Conversion]
+K --> H[ASM<br/>Binary Conversion]
+H --> I[stimulus.bin<br/>response.bin]
+
+C --> J[Scan Chain Insertion]
+J --> K[Scan Netlist]
+
+K --> L[JTAG TAP Integration]
+I --> L
+
+L --> M[Final DFT Netlist]
+
+M --> N[Simulation<br/>Icarus Verilog]
+M --> O[Area Analysis<br/>Yosys]
+
+style A fill:#1f77b4,color:#fff
+style B fill:#2ca02c,color:#fff
+style F fill:#ff7f0e,color:#fff
+style H fill:#9467bd,color:#fff
+style L fill:#d62728,color:#fff
+style M fill:#17becf,color:#fff
+```
+
+---
 
 ## 🚀 Getting Started
 
@@ -50,10 +87,15 @@ chmod +x fault_installation.sh
 ```
 ---
 
-🕒 Note on Duration: Because Yosys and Icarus are built from source to ensure compatibility with the latest PDKs, this process can take 60 to 90 minutes depending on your CPU.
+## 🕒 Installation Time
+Note on Duration: Because Yosys and Icarus are built from source to ensure compatibility with the latest PDKs, this process can take 60 to 90 minutes depending on your CPU.
 
-⚠️ System Resources: The script uses $(nproc) to compile at maximum speed. It is highly recommended to close browsers and other heavy applications to prevent system hangs during compilation.
+---
 
+## ⚠️ System Requirements
+Uses all CPU cores (nproc)
+Close heavy apps during build
+Recommended: ≥ 4GB RAM
 ---
 
 ##  Activate Fault_Environment
@@ -78,7 +120,7 @@ source ~/fault_env/bin/activate && source $HOME/.cargo/env
 ## 1️⃣ Directory Initialization
 Prepare the workspace by creating folders for each stage of the flow to keep outputs organized:
 ```bash
-mkdir Synth Cut Scan Asm JTAG Logs Report Atpg Schematic Simulation
+mkdir synth cut scan JTAG logs report atpg schematic simulation
 ```
 
 ---
@@ -93,7 +135,7 @@ Map the RTL to a gate-level netlist using the provided standard cell library.
 ---
 
 ## 3️⃣ Fault Cut (DFT Preparation)
-Define the clock and reset pins to isolate sequential elements for ATPG modeling.
+Define the clock and reset pins to isolate sequential elements for ATPG modeling.   
 ```bash
 # General Syntax:
 fault cut --clock <CLOCK PORT> --reset <RESET PORT> -o cut/<output_file> synth/<input_netlist> 2>&1 | tee logs/cut.log
@@ -125,7 +167,14 @@ fault chain \
 
 ---
 
-## 6️⃣ JTAG Integration
+## 6️⃣ ASM (Binary Vector Generation)
+ATPG patterns are converted into binary stimulus and expected response files.These .bin files are hardware-ready vectors used by JTAG to test the chip.
+```bash
+fault asm -o <vector.bin> -O <golden.bin> <.json file> <scan inserted netlist>
+```
+---
+
+## 7️⃣ JTAG Integration
 Integrate a Test Access Port (TAP) controller to allow external testers to communicate with the internal scan chains.
 ```bash
 fault tap \
@@ -134,6 +183,7 @@ fault tap \
   [--reset-activeLow/activeHigh] \
   -l <LIB_PATH.lib> \
   -c <CELL_MODEL.v> \
+  -t <vector.bin> -g <golden.bin>
   -o JTAG/<OUTPUT_JTAG_NETLIST.v> \
   scan/<INPUT_SCAN_NETLIST.v> \
   2>&1 | tee logs/tap.log
@@ -165,12 +215,10 @@ yosys -p "read_liberty -lib lib/$LIB_NAME.lib; read_verilog synth/$DESIGN_NETLIS
 Verify both the scan-chain functionality and JTAG wrapper using Icarus Verilog and VVP.
 ```bash
 # Compile
-iverilog -D VCD -o simulation/chain_sim scan/$DESIGN_SCAN.v.tb.sv
-iverilog -D VCD -o simulation/jtag_sim JTAG/$DESIGN_JTAG.v.tb.sv
+iverilog -D <simulation define> -o <path for simulation file> <testbench>
 
 # Run
-vvp simulation/jtag_sim
-vvp simulation/chain_sim
+vvp <simulation file>
 ```
 
 ---
@@ -183,6 +231,7 @@ vvp simulation/chain_sim
 | **Cut** | Cut netlist | ATPG-ready model (sequential isolation) |
 | **ATPG** | `.json` patterns | Vectors for manufacturing test |
 | **Scan** | Chain netlist | Controllability of internal registers |
+| **ASM** | .bin | Vector & golden response file |
 | **JTAG** | Wrapped netlist | System-level test access |
 | **Report** | Area/Coverage logs | Design trade-off analysis |
 | **Simulation** | `.vcd` Waveforms | Timing and functional verification |
