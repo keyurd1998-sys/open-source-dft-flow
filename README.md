@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![OS](https://img.shields.io/badge/OS-Ubuntu%20%7C%20Debian-orange)](#)
 
-An end-to-end **Design-for-Test (DFT)** methodology for Finite State Machines (FSMs). This repository provides a complete open-source pipeline for synthesis, scan-insertion, ATPG, and JTAG integration.
+An end-to-end **Design-for-Test (DFT)** methodology. This repository provides a complete open-source pipeline for synthesis, scan-insertion, ATPG, and JTAG integration.
 
 ---
 
