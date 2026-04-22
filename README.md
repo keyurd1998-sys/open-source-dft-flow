@@ -32,33 +32,26 @@ The flow follows a standard industry-like sequence:
 ## 📊 DFT Flow Diagram
 ```mermaid
 flowchart TB
-
-A[RTL Design<br/>Verilog FSM] --> B[Synthesis<br/>Yosys]
+A[RTL] --> B[synth]
 B --> C[Gate-Level Netlist]
-
-C --> D[Fault Cut<br/>Sequential Isolation]
-D --> E[Cut Netlist]
-
-E --> F[ATPG<br/>Pattern Generation]
+C --> D[Cut]
+D --> E[Sequential Isolated Cut Netlist]
+C --> J[Chain]
+J --> K[Scan Inserted Netlist]
+E --> F[atpg]
 F --> G[Patterns.json]
-
-G --> H[ASM<br/>Binary Conversion]
-K --> H[ASM<br/>Binary Conversion]
+G --> H[Fault asm<br/>Binary Conversion]
+K --> H
 H --> I[stimulus.bin<br/>response.bin]
-
-C --> J[Scan Chain Insertion]
-J --> K[Scan Netlist]
-
-K --> L[JTAG TAP Integration]
+K --> L[tap]
 I --> L
+L --> M[Tap inserted Netlist]
+L --> P[Testbench]
+P --> N[Simulation]
 
-L --> M[Final DFT Netlist]
 
-M --> N[Simulation<br/>Icarus Verilog]
-M --> O[Area Analysis<br/>Yosys]
-
-style D fill:#ff7f0e,color:#fff
 style B fill:#ff7f0e,color:#fff
+style D fill:#ff7f0e,color:#fff
 style F fill:#ff7f0e,color:#fff
 style J fill:#ff7f0e,color:#fff
 style H fill:#ff7f0e,color:#fff
